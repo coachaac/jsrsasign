@@ -2184,11 +2184,12 @@ KJUR.asn1.cms.CMSUtil.verifySignedData = function(param) {
     var _findCert = function(hCMS, result, si, idx) {
 	var certsIdx = result.parse.certsIdx;
 	var aCert;
+	var aIdx;
 
 	if (result.certs === undefined) {
 	    aCert = [];
 	    result.certkeys = [];
-	    var aIdx = _getChildIdx(hCMS, certsIdx);
+	    aIdx = _getChildIdx(hCMS, certsIdx);
 	    for (var i = 0; i < aIdx.length; i++) {
 		var hCert = _getTLV(hCMS, aIdx[i]);
 		var x = new X509();
@@ -2199,14 +2200,15 @@ KJUR.asn1.cms.CMSUtil.verifySignedData = function(param) {
 	    result.certs = aCert;
 	} else {
 	    aCert = result.certs;
+		aIdx = _getChildIdx(hCMS, certsIdx);
 	}
 
 	result.cccc = aCert.length;
 	result.cccci = aIdx.length;
 
 	for (var i = 0; i < aCert.length; i++) {
-	    var issuer2 = x.getIssuerHex();
-	    var serial2 = x.getSerialNumberHex();
+	    var issuer2 = aCert[i].getIssuerHex();
+	    var serial2 = aCert[i].getSerialNumberHex();
 	    if (si.signerid_issuer1 === issuer2 &&
 		si.signerid_serial1 === serial2) {
 		si.certkey_idx = i;
